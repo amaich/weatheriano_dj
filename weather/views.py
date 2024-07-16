@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
 
 import requests
 
@@ -45,12 +46,15 @@ def get_weather_for_city_by_days(city, days)  -> requests.models.Response | None
         return None
 
 
-def index(request):
-    return render(request, 'weather/index.html', context={})
+def weather_search(request):
+    if request.GET.get('search_type') == 'by_hours':
+        weather = get_weather_for_city_by_hours(request.GET.get('city'), 6)
+    elif request.GET.get('search_type') == 'by_days':
+        weather = get_weather_for_city_by_days(request.GET.get('city'), 6)
+    else:
+        return render(request, 'weather/weather_search.html', context={'error': 'choose search type'})
 
-
-def city_search(request):
-
-    r = get_weather_for_city_by_hours(request.GET['city'], 6)
-
-    return HttpResponse(r)
+    if weather:
+        return render(request, 'weather/weather_search.html', context={'weather': weather.json()})
+    else:
+        return render(request, 'weather/weather_search.html', context={'error': 'city name error'})

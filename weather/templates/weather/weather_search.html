@@ -1,0 +1,21 @@
+{% extends "weather/base.html" %}
+{% block content %}
+<form action="{% url 'weather:weather_search' %}" method="get">
+    <fieldset>
+    <legend>Select a type</legend>
+        <input type="radio" id="by_hours" name="search_type" value="by_hours">
+        <label for="by_hours">By hours</label>
+        <input type="radio" id="by_days" name="search_type" value="by_days">
+        <label for="by_days">By days</label>
+    <input name="city" type="text" >
+    <button type="submit">Search</button>
+    </fieldset>
+</form>
+{% if weather %}
+<p>Weather:</p>
+{{ weather }}
+{% else %}
+{{ error }}
+{% endif %}
+{{ errors }}
+{% endblock %}
